@@ -1,0 +1,63 @@
+#version: '3.3'
+version: '2.4'
+services:
+  crawler_db:
+    image: mongo:3.2
+    volumes:
+      - crawler_db:/data/db
+    networks:
+      back_net:
+        aliases:
+          - crawler_db
+  ui:
+    env_file: .env
+    image: ${USERNAME}/crawler_ui:${UI_VER}
+    ports:
+      - ${UI_PORT_H}:${UI_PORT_C}/${UI_PRO}
+    networks:
+      - front_net
+      - back_net
+    environment:
+      - MONGO=crawler_db
+  crawler:
+    env_file: .env
+    image: ${USERNAME}/crawler:${CRAWLER_VER}
+#    entrypoint: "/bin/sleep 5d"
+    environment:
+      - MONGO=crawler_db
+      - RMQ_HOST=rabbitmq
+      - RMQ_QUEUE=${RMQ_QUEUE}
+      - RMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RMQ_PASSWORD=${RABBITMQ_PASSWORD}
+      - CHECK_INTERVAL=${CHECK_INTERVAL}
+      - EXCLUDE_URLS=${EXCLUDE_URLS}
+    depends_on:
+      crawler_db:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy   
+   
+    networks:
+      - back_net
+      - front_net
+  rabbitmq:
+    env_file: .env
+    image: bitnami/rabbitmq:${RABBITMQ_VER}
+    environment: 
+      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD} 
+    networks:
+      - back_net
+    healthcheck:
+      test:
+        ["CMD", "/opt/bitnami/scripts/rabbitmq/healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 4
+
+volumes:
+  crawler_db:
+
+networks:
+  front_net:
+  back_net: 

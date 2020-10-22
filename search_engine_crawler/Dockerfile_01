@@ -1,0 +1,13 @@
+FROM python:3.6.0-alpine
+
+WORKDIR /crawler
+ADD crawler/ /crawler
+RUN apk --no-cache --update add build-base && \
+    pip install -r /crawler/requirements.txt && \
+    apk del build-base
+
+ENV MONGO mongo
+ENV CHECK_INTERVAL 1800
+ENV EXCLUDE_URLS .*github.com
+ENTRYPOINT ["python -u", "crawler.py"]
+CMD ["https://vitkhab.github.io/search_engine_test_site/"]

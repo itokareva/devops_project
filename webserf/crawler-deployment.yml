@@ -1,0 +1,46 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crawler
+  labels:
+    app: webserf
+    component: crawler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webserf
+      component: crawler
+  template:
+    metadata:
+      name: crawler
+      labels:
+        app: webserf
+        component: crawler
+    spec:
+      containers:
+      - image: itokareva/crawler:1.0
+        name: crawler
+        ports:
+        - containerPort: 8000
+          name: crawler
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 500m
+        env:
+        - name: MONGO
+          value: crawler-db
+        - name: RMQ_HOST
+          value: my-rabbitmq
+        - name: RMQ_QUEUE
+          value: my-rabbitmq
+        - name: RMQ_USERNAME
+          value: itokareva
+        - name: RMQ_PASSWORD 
+          value: ghjvjrfirf
+        - name: CHECK_INTERVAL
+          value: '100'
+        - name: EXCLUDE_URLS
+          value: .*github.com     
