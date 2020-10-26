@@ -11,4 +11,4 @@ ingress:
   class: nginx
   host: crawler-ui 
   
-databaseHost:
+databaseHost: mongodb

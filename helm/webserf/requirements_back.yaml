@@ -1,8 +1,8 @@
 ---
 dependencies:
   - name: mongodb
-    version: 1.0.0
-    repository: "file://../mongodb" 
+    version: 7.8.10
+    repository: https://kubernetes-charts.storage.googleapis.com
 
   - name: rabbitmq
     version: 7.6.8
