@@ -1,0 +1,15 @@
+dependencies:
+- name: mongodb
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 7.8.10
+- name: rabbitmq
+  repository: file://../rabbitmq
+  version: 7.6.8
+- name: crawler
+  repository: file://../crawler
+  version: 1.0.0
+- name: ui
+  repository: file://../ui
+  version: 1.0.0
+digest: sha256:b287f15b41d1c230d72885346c61c309c4c8a0d9e82bb63f48737d2f1cc35ea4
+generated: 2020-10-26T02:36:40.812100651+03:00

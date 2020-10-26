@@ -1,0 +1,6 @@
+---
+rabbitmg: 
+  auth:
+    username: admin
+    password: secretpassword
+    erlangCookie: secretcookie
