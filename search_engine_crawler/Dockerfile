@@ -1,11 +1,12 @@
 FROM python:3.6.0-alpine
 
-WORKDIR /search_engine_crawler
-ADD . /search_engine_crawler/
-RUN apk --no-cache --update add build-base busybox-extras && \
-    pip install -r requirements.txt && \
-    pip install -r requirements-test.txt && \
-    apk del build-base
+WORKDIR /app
+COPY ./requirements.txt /app
+RUN apk add --no-cache && pip install -r /app/requirements.txt
+COPY . /app
+WORKDIR /app/crawler
+ENV SITE_URL https://vitkhab.github.io/search_engine_test_site/
 
-ENV EXCLUDE_URLS .*github.com
-CMD python3 -u crawler/crawler.py https://vitkhab.github.io/search_engine_test_site/
+ENTRYPOINT python -u crawler.py "$SITE_URL"
+
+

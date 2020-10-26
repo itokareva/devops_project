@@ -20,7 +20,7 @@ spec:
         component: crawler
     spec:
       containers:
-      - image: itokareva/crawler:1.0
+      - image: itokareva/crawler:2.0
         name: crawler
         ports:
         - containerPort: 8000
@@ -37,10 +37,12 @@ spec:
         - name: RMQ_QUEUE
           value: my-rabbitmq
         - name: RMQ_USERNAME
-          value: itokareva
+          value: admin
         - name: RMQ_PASSWORD 
-          value: ghjvjrfirf
+          value: secretpassword
         - name: CHECK_INTERVAL
           value: '100'
         - name: EXCLUDE_URLS
-          value: .*github.com     
+          value: .*github.com 
+        args: [ "https://vitkhab.github.io/search_engine_test_site"]
+
