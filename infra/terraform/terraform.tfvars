@@ -1,5 +1,7 @@
 project_id               = "hallowed-zoo-291019"
 region                   = "europe-north1-a"
+#region                   = "europe-west1-b"
 zone                     = "europe-north1"
+#zone                     = "europe-west1"
 monitoring_service       = "none"
 logging_service          = "none" 
