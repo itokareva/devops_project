@@ -1,0 +1,4 @@
+adminPassword: admin
+service.type: NodePort
+ingress.enabled: "true"
+ingress.hosts: {webserf-grafana}

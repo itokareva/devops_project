@@ -1,0 +1,4 @@
+---
+auth.username: admin
+auth.password: secretpassword
+auth.erlangCookie: secretcookie
