@@ -44,6 +44,7 @@ resource "google_container_cluster" "webserf" {
 
 resource "google_container_node_pool" "primary_preemptible_nodes" {
   name       = "webserf-pool"
+
   location   = var.region 
   cluster    = google_container_cluster.webserf.name
   node_count = 3
@@ -52,8 +53,8 @@ resource "google_container_node_pool" "primary_preemptible_nodes" {
   node_config {
     preemptible  = true
     machine_type = "e2-standard-2"
-    disk_size_gb = 30
 
+    disk_size_gb = 30
     metadata = {
       disable-legacy-endpoints = "true"
     }
