@@ -3,18 +3,13 @@ provider "helm" {
     config_path = "~/.kube/config"
   }
 }
-
-resource "helm_release" "namespace" {
-  name       = "namespace"
-  chart      = "../../../helm/namespace"
-  version    = "0.1.0"
-}
  
 resource "helm_release" "nginx" {
   name       = "nginx"
   chart      = "../../../helm_servicies/nginx"
   version    = "edge"
   namespace  = "monitoring"
+  create_namespace = true
 
 }
 
@@ -41,6 +36,7 @@ resource "helm_release" "grafana" {
   chart      = "../../../helm_servicies/grafana"
   version    = "5.5.7"
   namespace  = "monitoring"
+  create_namespace = true
 
   values = [
     "${file("../../../helm_servicies/grafana/values.yaml")}"
@@ -72,7 +68,7 @@ resource "helm_release" "efk1" {
   chart      = "../../../helm_servicies/efk"
   version    = "0.1.0"
   namespace  = "monitoring"
-
+  create_namespace = true
 }
 
 resource "helm_release" "kibana" {
@@ -80,6 +76,7 @@ resource "helm_release" "kibana" {
   chart      = "../../../helm_servicies/kibana"
   version    = "0.1.1"
   namespace  = "monitoring"
+  create_namespace = true
 
  set {
     name  = "env.ELASTICSEARCH_URL"

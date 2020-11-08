@@ -1,7 +1,0 @@
-name: namespace 
-version: 1.0.0
-description: OTUS webserf application UI
-maintainers:
-  - name: Irina Tokareva
-    email: itokareva@yandex.ru
-appVersion: 1.0
