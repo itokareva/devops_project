@@ -1,0 +1,17 @@
+---
+service:
+  internalPort: 8000
+  externalPort: 8000
+
+image:
+  repository: itokareva/crawler
+  tag: "2.0"
+
+databaseHost: mongodb
+rabbitmqHost:
+queueName: my-rabbitmq
+userName: admin
+password: secretpassword
+interval: 100
+excludeUrl: .*github.com
+url: https://vitkhab.github.io/search_engine_test_site

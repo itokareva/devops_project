@@ -1,0 +1,136 @@
+image: alpine:latest
+
+stages:
+  - test
+  - staging
+  - production
+
+test:
+  stage: test
+  script:
+    - exit 0
+  only:
+    - triggers
+    - branches
+
+staging:
+  stage: staging
+  variables:
+    KUBE_NAMESPACE: staging
+    TILLER_NAMESPACE: kube-system
+    KUBE_STORAGECLASS: fast
+    KUBE_NETWORKPOLICY: deny-db-traffic
+    version: $CI_PIPELINE_ID-$CI_JOB_ID
+#    host: $CI_PROJECT_PATH_SLUG-$CI_COMMIT_REF_SLUG
+  environment:
+    name: staging
+    url: http://staging
+  only:
+    refs:
+      - master
+    kubernetes: active
+  before_script:
+    # installing dependencies
+    - apk add -U openssl curl tar gzip bash ca-certificates git
+    - wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
+    - wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-2.23-r3.apk
+    - apk add glibc-2.23-r3.apk
+    - rm glibc-2.23-r3.apk
+    - curl https://kubernetes-helm.storage.googleapis.com/helm-v2.13.1-linux-amd64.tar.gz | tar zx
+    - curl https://get.helm.sh/helm-v3.3.4-linux-amd64.tar.gz | tar zx
+    - mv linux-amd64/helm /usr/bin/
+    - helm version --client
+    - curl -L -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+    - chmod +x /usr/bin/kubectl
+    - kubectl version --client
+    - git clone http://gitlab-gitlab/$CI_PROJECT_NAMESPACE/prepare.git
+    # ensuring namespace
+    - kubectl describe namespace "$KUBE_NAMESPACE" || kubectl create namespace "$KUBE_NAMESPACE"
+    # ensuring StorageClass
+    - kubectl describe StorageClass "$KUBE_STORAGECLASS" || kubectl create -f prepare/storage-fast.yml     
+    # ensuring NetworkPolicy
+    - echo "kubectl describe NetworkPolicy "$KUBE_NETWORKPOLICY 
+    - kubectl describe NetworkPolicy "$KUBE_NETWORKPOLICY" -n "$KUBE_NAMESPACE" || kubectl create -f prepare/mongo-network-policy.yml -n "$KUBE_NAMESPACE"
+    # installing Tiller
+    - >
+      if ! helm version --debug; then
+        echo "Failed to init Tiller."
+        exit 1
+      fi  
+  script:     
+    - echo $KUBE_NAMESPACE
+    - track="${1-stable}"
+    - name="$CI_ENVIRONMENT_SLUG"
+    - helm dep build webserf
+    # for microservice in $(helm dep ls | grep "file://" | awk '{print $1}') ; do
+    #   SET_VERSION="$SET_VERSION \ --set $microservice.image.tag='$(curl http://gitlab-gitlab/$CI_PROJECT_NAMESPACE/ui/raw/master/VERSION)' "
+    - >
+      helm upgrade --install \
+        --set ui.ingress.host="$host" \
+        --set search_engine_crawler.image.tag="$(curl http://gitlab-gitlab/$CI_PROJECT_NAMESPACE/search_engine_crawler/raw/master/VERSION)" \
+        --set search_engine_ui.image.tag="$(curl http://gitlab-gitlab/$CI_PROJECT_NAMESPACE/search_engine_ui/raw/master/VERSION)" \
+        --namespace="$KUBE_NAMESPACE" \
+        --version="$version" \
+        "$name" \
+        webserf     
+
+production:
+  stage: production
+  variables:
+    KUBE_NAMESPACE: production
+    KUBE_STORAGECLASS: fast
+    KUBE_NETWORKPOLICY: deny-db-traffic
+    TILLER_NAMESPACE: kube-system
+    version: $CI_PIPELINE_ID-$CI_JOB_ID
+  environment:
+    name: production
+    url: http://production
+  when: manual
+  only:
+    refs:
+      - master
+    kubernetes: active
+  before_script:
+    # installing dependencies
+    - apk add -U openssl curl tar gzip bash ca-certificates git
+    - wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
+    - wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.23-r3/glibc-2.23-r3.apk
+    - apk add glibc-2.23-r3.apk
+    - rm glibc-2.23-r3.apk
+    - curl https://kubernetes-helm.storage.googleapis.com/helm-v2.13.1-linux-amd64.tar.gz | tar zx
+    - curl https://get.helm.sh/helm-v3.3.4-linux-amd64.tar.gz | tar zx
+    - mv linux-amd64/helm /usr/bin/
+    - helm version --client
+    - curl -L -o /usr/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+    - chmod +x /usr/bin/kubectl
+    - kubectl version --client
+    - git clone http://gitlab-gitlab/$CI_PROJECT_NAMESPACE/prepare.git
+    # ensuring namespace
+    - kubectl describe namespace "$KUBE_NAMESPACE" || kubectl create namespace "$KUBE_NAMESPACE"
+      # ensuring StorageClass
+    - kubectl describe StorageClass "$KUBE_STORAGECLASS" || kubectl create -f prepare/storage-fast.yml     
+    # ensuring NetworkPolicy
+    - echo "kubectl describe NetworkPolicy "$KUBE_NETWORKPOLICY 
+    - kubectl describe NetworkPolicy "$KUBE_NETWORKPOLICY" -n "$KUBE_NAMESPACE" || kubectl create -f prepare/mongo-network-policy.yml -n "$KUBE_NAMESPACE"
+    # installing Tiller
+    - >
+      if ! helm version --debug; then
+        echo "Failed to init Tiller."
+        exit 1
+      fi 
+  script:     
+    - echo $KUBE_NAMESPACE
+    - track="${1-stable}"
+    - name="$CI_ENVIRONMENT_SLUG"
+    - helm dep build webserf
+    # for microservice in $(helm dep ls | grep "file://" | awk '{print $1}') ; do
+    #   SET_VERSION="$SET_VERSION \ --set $microservice.image.tag='$(curl http://gitlab-gitlab/$CI_PROJECT_NAMESPACE/ui/raw/master/VERSION)' "
+    - >
+      helm upgrade --install \
+        --set ui.ingress.host="$host" \
+        --set search_engine_crawler.image.tag="$(curl http://gitlab-gitlab/$CI_PROJECT_NAMESPACE/search_engine_crawler/raw/master/VERSION)" \
+        --set search_engine_ui.image.tag="$(curl http://gitlab-gitlab/$CI_PROJECT_NAMESPACE/search_engine_ui/raw/master/VERSION)" \
+        --namespace="$KUBE_NAMESPACE" \
+        --version="$version" \
+        "$name" \
+        webserf
