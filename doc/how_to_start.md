@@ -23,6 +23,7 @@ gcloud container clusters get-credentials webserf --zone "зона" --project "�
 kubectl get svc 
 
 Прописываем в /etc/hosts:
+
 EXTERNAL-IP webserf-prometheus webserf-grafana crawler-ui webserf-kibana
 
 ## Поднимаем Gitlab
@@ -34,6 +35,7 @@ EXTERNAL-IP webserf-prometheus webserf-grafana crawler-ui webserf-kibana
 - kubectl get svc 
 
 Прописываем в /etc/hosts:
+
 EXTERNAL-IP itokareva-search-engine-crawler-unit-test itokareva-search-engine-ui-review 
  
 ## Сборка, unit-test, тестовый deploy и cleanup приложения с feature - веток
