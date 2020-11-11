@@ -30,6 +30,7 @@ EXTERNAL-IP webserf-prometheus webserf-grafana crawler-ui webserf-kibana
 - cd gitlab-omnibus
 - terraform apply ---auto-approve 
 Смотрим EXTERNAL-IP для nginx:
+
 - kubectl get svc 
 
 Прописываем в /etc/hosts:
