@@ -1,4 +1,4 @@
-![альт](doc/webserf.png "схема работы приложения")
+![альт](https://github.com/itokareva/devops_project/blob/master/doc/webserf.png "схема работы приложения")
 # Search Engine Crawler
 
 Поисковый бот для сбора текстовой информации с веб-страниц и ссылок.
