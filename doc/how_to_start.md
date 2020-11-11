@@ -96,6 +96,23 @@ webserf в namespace unittest для crawler или review для ui .
   
   - выполнены настройки конфигурации так, чтобы Grafana открывалась с уже преднастроенным DadaSource и дашбордами.
   
+  Открываем в браузере: http://webserf-grafana/
+  
   ## Логгирование 
+  
+  Для логгирования использован EFK-стэк:
+  
+  - ElasticSearch (база данных + поисковый движок) 
+  - Fluentd (отправитель и агрегатор логов) 
+  - Kibana (веб-интерфейс для запросов в хранилище и отображения их результатов)
+  
+  Открываем в браузере: http://webserf-kibana/
+  Создаем индекс по контексту fluentd-*.
+  
+  Пользуемся фильтрами для поиска нжной информации, например: 
+  
+  - kubernetes.labels.component:ui and path:metrics
+  - kubernetes.labels.component:crawler and event:     parse_page
+  
   
   
