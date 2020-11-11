@@ -11,6 +11,7 @@ depends_on:
         condition: service_started
       rabbitmq:
         condition: service_healthy
+        
 24.10.2020 - написание кода инфраструктыры для развертывания k8s- кластера
 25.10.2020 - написание кода инфраструктуры для запуска 4 компонентов приложения: rabbinmq, mongodb, srawler_engine, crawler_ui 
              через terraform, provider helm. Была проблема: обе компоненты приложения не видели БД. 
