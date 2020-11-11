@@ -1,11 +1,13 @@
 ## Развертывам GKE (Google kubernetes engine) cluster
 1) 
 Устанавливаем на машине для развертывания terraform, Google Cloud SDK
+
 2)
 
 cd infra/terraform/
 terraform init
 terraform apply ---auto-approve
+
 переключаемся на контекст созданного k8s кластера:
 gcloud container clusters get-credentials webserf --zone "зона" --project "имя проекта"
 
