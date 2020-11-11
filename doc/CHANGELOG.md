@@ -9,11 +9,11 @@
 20.10.2020 - найдена причина отсутствия коннекта. Приложение стартовало раньше, чем поднималась rabbitmq.
              Все заработалол после добавления блока:
 
-{code}depends_on:
+```depends_on:
       crawler_db:
         condition: service_started
       rabbitmq:
-        condition: service_healthy{code} 
+        condition: service_healthy``` 
         
 24.10.2020 - написание кода инфраструктыры для развертывания k8s- кластера
 
