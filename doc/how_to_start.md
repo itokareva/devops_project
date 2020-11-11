@@ -4,19 +4,20 @@
 
 2)
 
-cd infra/terraform/
-terraform init
-terraform apply ---auto-approve
+- cd infra/terraform/
+- terraform init
+- terraform apply ---auto-approve
 
 переключаемся на контекст созданного k8s кластера:
+
 gcloud container clusters get-credentials webserf --zone "зона" --project "имя проекта"
 
 ## Развертываем инфраструктуру мониторинга
 
 Накатываем на наш развернутый кластер nginx, инфраструктуру мониторинга и логгирвания
 
-cd infra/terraform/helm/monitoring
-terraform apply ---auto-approve
+- cd infra/terraform/helm/monitoring
+- terraform apply ---auto-approve
 
 Смотрим EXTERNAL-IP для nginx-nginx-ingress-controller:
 kubectl get svc 
@@ -26,10 +27,10 @@ EXTERNAL-IP webserf-prometheus webserf-grafana crawler-ui webserf-kibana
 
 ## Поднимаем Gitlab
 
-cd gitlab-omnibus
-terraform apply ---auto-approve 
+- cd gitlab-omnibus
+- terraform apply ---auto-approve 
 Смотрим EXTERNAL-IP для nginx:
-kubectl get svc 
+- kubectl get svc 
 
 Прописываем в /etc/hosts:
 EXTERNAL-IP itokareva-search-engine-crawler-unit-test itokareva-search-engine-ui-review 
